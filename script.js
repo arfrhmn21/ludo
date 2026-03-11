@@ -152,7 +152,7 @@ function playSound(soundName) {
     if (sounds[soundName]) {
         sounds[soundName].currentTime = 0;
         sounds[soundName].volume = 1;
-        sounds[soundName].play();
+        sounds[soundName].play().catch(e => console.log("Audio play blocked by browser"));
     }
 }
 
@@ -183,10 +183,10 @@ let turnsWithoutExit = {
 };
 
 let pionsPos = {
-    red: [55, 56, 56, 56],
-    green: [55, 56, 56, 56],
-    blue: [55, 56, 56, 56],
-    yellow: [55, 56, 56, 56],
+    red: [-1, -1, -1, -1],
+    green: [-1, -1, -1, -1],
+    blue: [-1, -1, -1, -1],
+    yellow: [-1, -1, -1, -1],
 };
 
 /* -------------------------------------------------------------------------- */
