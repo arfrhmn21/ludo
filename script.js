@@ -642,7 +642,7 @@ function rollDice(isBotCall = false) {
             }
         }
         isRolling = false;
-    }, 1110);
+    }, 1000);
 }
 
 function isPositionSafe(targetCoords, myColor) {
