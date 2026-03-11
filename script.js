@@ -152,6 +152,7 @@ function playSound(soundName) {
     if (sounds[soundName]) {
         sounds[soundName].currentTime = 0;
         sounds[soundName].volume = 1;
+        sounds[soundName].play();
     }
 }
 
