@@ -1466,15 +1466,15 @@ function finalizeAllColors(selectedColors) {
 
     if (selectedColors.length === 2) {
         finalPath[3] = selectedColors[0];
-        finalPath[1] = selectedColors[1];
-
         finalPath[0] = remainingColors[0];
+        
+        finalPath[1] = selectedColors[1];
         finalPath[2] = remainingColors[1];
     } else if (selectedColors.length === 3) {
-        finalPath[0] = selectedColors[0];
-        finalPath[1] = selectedColors[1];
+        finalPath[0] = selectedColors[1];
+        finalPath[1] = selectedColors[2];
         finalPath[2] = remainingColors[0];
-        finalPath[3] = selectedColors[2];
+        finalPath[3] = selectedColors[0];
     } else {
         finalPath = [...selectedColors];
     }
