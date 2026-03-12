@@ -298,7 +298,7 @@ body {
    ========================================= */
 .pion {
     max-width: 25px;
-    max-height: 35px;
+    max-height: 25px;
     width: 85%;
     height: 85%;
     flex: none;
