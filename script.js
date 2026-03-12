@@ -185,10 +185,10 @@ let turnsWithoutExit = {
 };
 
 let pionsPos = {
-    red: [-1, -1, -1, -1],
-    green: [-1, -1, -1, -1],
-    blue: [-1, -1, -1, -1],
-    yellow: [-1, -1, -1, -1],
+    red: [54, 53, 52, 51],
+    green: [54, 53, 52, 51],
+    blue: [54, 53, 52, 51],
+    yellow: [54, 53, 52, 51],
 };
 
 /* -------------------------------------------------------------------------- */
@@ -639,7 +639,7 @@ function rollDice(isBotCall = false) {
                         if (!pionToMove) pionToMove = movablePionIds[0];
 
                         movePion(pionToMove);
-                    }, 500);
+                    }, 250);
                 }
             }
         }
@@ -949,11 +949,11 @@ function updatePionSizes(cell) {
     pions.forEach((p) => {
         p.style.zIndex = "10";
         if (count === 1) {
-            p.style.width = "30px";
-            p.style.height = "30px";
+            p.style.width = "60%";
+            p.style.height = "60%";
         } else {
-            p.style.width = count <= 4 ? "15px" : "10px";
-            p.style.height = count <= 4 ? "15px" : "10px";
+            p.style.width = count <= 4 ? "40%" : "30%";
+            p.style.height = count <= 4 ? "40%" : "30%";
         }
     });
 }
@@ -965,9 +965,9 @@ function updateCenterPionSizes(color) {
 
     finishedPions.forEach((p, index) => {
         p.style.zIndex = 10 + index;
-        p.style.width = "22px";
-        p.style.height = "22px";
-        p.style.border = "2px solid #000";
+        p.style.width = "15%";
+        p.style.height = "15%";
+        p.style.border = "1px solid #000";
         p.style.position = "absolute";
 
         let offset = index * 5;
@@ -1198,7 +1198,7 @@ function showFinalResult() {
         row.innerHTML = `
             <td style="color: #fff">${rankText}</td>
             <td style="color: ${PLAYER_COLORS[color]}">${color.toUpperCase()}</td>
-            <td style="color: ${isLoser ? "#e74c3c" : "#2ecc71"}">${isLoser ? "LOSER" : "FINISHED"}</td>
+            <td style="color: ${isLoser ? "#e74c3c" : index === 0 ? "#ffd900" : "#2ecc71"}">${isLoser ? "LOSER" : index === 0 ? "WINNER" : "FINISHED"}</td>
         `;
         statsBody.appendChild(row);
     });
@@ -1492,7 +1492,7 @@ function finalizeAllColors(selectedColors) {
             let randomSelectedColors = [...selectedColors];
 
             for (let i = 0; i < maxShuffleCount; i++) {
-                randomSelectedColors = shuffleArray(selectedColors)
+                randomSelectedColors = shuffleArray(selectedColors);
             }
 
             finalPath[0] = randomSelectedColors[1];
