@@ -152,7 +152,9 @@ function playSound(soundName) {
     if (sounds[soundName]) {
         sounds[soundName].currentTime = 0;
         sounds[soundName].volume = 1;
-        sounds[soundName].play().catch(e => console.log("Audio play blocked by browser"));
+        sounds[soundName]
+            .play()
+            .catch((e) => console.log("Audio play blocked by browser"));
     }
 }
 
@@ -1112,6 +1114,14 @@ function nextTurn() {
 /* 8. UTILITIES                                  */
 /* -------------------------------------------------------------------------- */
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 function getPath(startIndex) {
     const path = [
         ...MAIN_PATH.slice(startIndex),
@@ -1262,8 +1272,9 @@ document.querySelector("#menu-vs-bot .play-btn").onclick = function () {
     );
 
     const allAvailable = ["red", "green", "yellow", "blue"];
+    const randomAllAvailable = shuffleArray([...allAvailable]);
 
-    let otherColors = allAvailable.filter((c) => c !== userColor);
+    let otherColors = randomAllAvailable.filter((c) => c !== userColor);
 
     players = [userColor];
     botPlayers = [];
@@ -1321,28 +1332,28 @@ document.querySelector(".play-btn").onclick = function () {
     const activeConfig = document.querySelector(
         '.player-config[style*="display: block"]',
     );
-    const selectedColors = [];
+    let selectedColors = [];
 
-    const selectedButtons = activeConfig.querySelectorAll(
-        ".color-btn.selected",
-    );
-    selectedButtons.forEach((btn) => selectedColors.push(btn.dataset.color));
-
-    let required = 2;
-    if (activeConfig.id === "menu-3player") required = 3;
-    if (activeConfig.id === "menu-4player") required = 4;
-
+    // Jika 4 player, ambil semua warna yang tersedia di baris tersebut secara otomatis
     if (activeConfig.id === "menu-4player") {
-        ALL_COLORS = ["green", "red", "yellow", "blue"];
-        players = [...ALL_COLORS];
+        const allBtns = activeConfig.querySelectorAll(".color-btn");
+        allBtns.forEach((btn) => selectedColors.push(btn.dataset.color));
     } else {
-        players = selectedColors;
-        finalizeAllColors(selectedColors);
+        // Untuk 2P dan 3P, ambil yang hanya berstatus 'selected'
+        const selectedButtons = activeConfig.querySelectorAll(
+            ".color-btn.selected",
+        );
+        selectedButtons.forEach((btn) =>
+            selectedColors.push(btn.dataset.color),
+        );
     }
+
+    // Sekarang selectedColors tidak akan 0 lagi
+    players = selectedColors;
+    finalizeAllColors(selectedColors);
 
     document.getElementById("menu-select-player").style.display = "none";
     document.getElementById("game-container").style.display = "flex";
-
     initGame();
 };
 
@@ -1467,7 +1478,7 @@ function finalizeAllColors(selectedColors) {
     if (selectedColors.length === 2) {
         finalPath[3] = selectedColors[0];
         finalPath[0] = remainingColors[0];
-        
+
         finalPath[1] = selectedColors[1];
         finalPath[2] = remainingColors[1];
     } else if (selectedColors.length === 3) {
@@ -1476,7 +1487,24 @@ function finalizeAllColors(selectedColors) {
         finalPath[2] = remainingColors[0];
         finalPath[3] = selectedColors[0];
     } else {
-        finalPath = [...selectedColors];
+        if (botPlayers.length === 0) {
+            const maxShuffleCount = 100;
+            let randomSelectedColors = [...selectedColors];
+
+            for (let i = 0; i < maxShuffleCount; i++) {
+                randomSelectedColors = shuffleArray(selectedColors)
+            }
+
+            finalPath[0] = randomSelectedColors[1];
+            finalPath[1] = randomSelectedColors[2];
+            finalPath[2] = randomSelectedColors[3];
+            finalPath[3] = randomSelectedColors[0];
+        } else {
+            finalPath[0] = selectedColors[1];
+            finalPath[1] = selectedColors[2];
+            finalPath[2] = selectedColors[3];
+            finalPath[3] = selectedColors[0];
+        }
     }
 
     ALL_COLORS = finalPath;

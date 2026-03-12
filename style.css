@@ -401,6 +401,12 @@ body {
     justify-content: center;
 }
 
+.player-config .info-text,
+.player-config .player-row,
+.player-config p {
+    margin-top: 15px;
+}
+
 .player-row {
     display: flex;
     justify-content: center;
