@@ -154,8 +154,8 @@ function playSound(soundName) {
         sounds[soundName].currentTime = 0;
         sounds[soundName].volume = 1;
         sounds[soundName]
-        .play()
-        .catch((e) => console.log("Audio play blocked by browser"));
+            .play()
+            .catch((e) => console.log("Audio play blocked by browser"));
     }
 }
 
@@ -1056,11 +1056,11 @@ function updateDiceUI() {
     const hexColor = PLAYER_COLORS[colorKey]; // Ambil kode warna hex dari objek Anda
 
     // Mewarnai setiap sisi dadu
-    faces.forEach(face => {
+    faces.forEach((face) => {
         face.style.backgroundColor = hexColor;
-        
+
         const dots = face.querySelectorAll(".dot");
-        dots.forEach(dot => {
+        dots.forEach((dot) => {
             dot.style.background = "#333";
         });
     });

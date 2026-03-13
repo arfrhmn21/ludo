@@ -88,7 +88,7 @@ body {
 /* =========================================
    Dice Controls
    ========================================= */
-   
+
 .controls {
     margin-left: 30px;
     display: flex;
@@ -147,47 +147,109 @@ body {
     justify-self: center;
 }
 
-.front .dot:nth-child(1) { grid-area: 2 / 2; }
+.front .dot:nth-child(1) {
+    grid-area: 2 / 2;
+}
 
-.top .dot:nth-child(1) { grid-area: 1 / 1; }
-.top .dot:nth-child(2) { grid-area: 3 / 3; }
+.top .dot:nth-child(1) {
+    grid-area: 1 / 1;
+}
+.top .dot:nth-child(2) {
+    grid-area: 3 / 3;
+}
 
-.right .dot:nth-child(1) { grid-area: 1 / 1; }
-.right .dot:nth-child(2) { grid-area: 2 / 2; }
-.right .dot:nth-child(3) { grid-area: 3 / 3; }
+.right .dot:nth-child(1) {
+    grid-area: 1 / 1;
+}
+.right .dot:nth-child(2) {
+    grid-area: 2 / 2;
+}
+.right .dot:nth-child(3) {
+    grid-area: 3 / 3;
+}
 
-.left .dot:nth-child(1) { grid-area: 1 / 1; }
-.left .dot:nth-child(2) { grid-area: 1 / 3; }
-.left .dot:nth-child(3) { grid-area: 3 / 1; }
-.left .dot:nth-child(4) { grid-area: 3 / 3; }
+.left .dot:nth-child(1) {
+    grid-area: 1 / 1;
+}
+.left .dot:nth-child(2) {
+    grid-area: 1 / 3;
+}
+.left .dot:nth-child(3) {
+    grid-area: 3 / 1;
+}
+.left .dot:nth-child(4) {
+    grid-area: 3 / 3;
+}
 
-.bottom .dot:nth-child(1) { grid-area: 1 / 1; }
-.bottom .dot:nth-child(2) { grid-area: 1 / 3; }
-.bottom .dot:nth-child(3) { grid-area: 2 / 2; }
-.bottom .dot:nth-child(4) { grid-area: 3 / 1; }
-.bottom .dot:nth-child(5) { grid-area: 3 / 3; }
+.bottom .dot:nth-child(1) {
+    grid-area: 1 / 1;
+}
+.bottom .dot:nth-child(2) {
+    grid-area: 1 / 3;
+}
+.bottom .dot:nth-child(3) {
+    grid-area: 2 / 2;
+}
+.bottom .dot:nth-child(4) {
+    grid-area: 3 / 1;
+}
+.bottom .dot:nth-child(5) {
+    grid-area: 3 / 3;
+}
 
-.back-dice .dot:nth-child(1) { grid-area: 1 / 1; }
-.back-dice .dot:nth-child(2) { grid-area: 1 / 3; }
-.back-dice .dot:nth-child(3) { grid-area: 2 / 1; }
-.back-dice .dot:nth-child(4) { grid-area: 2 / 3; }
-.back-dice .dot:nth-child(5) { grid-area: 3 / 1; }
-.back-dice .dot:nth-child(6) { grid-area: 3 / 3; }
+.back-dice .dot:nth-child(1) {
+    grid-area: 1 / 1;
+}
+.back-dice .dot:nth-child(2) {
+    grid-area: 1 / 3;
+}
+.back-dice .dot:nth-child(3) {
+    grid-area: 2 / 1;
+}
+.back-dice .dot:nth-child(4) {
+    grid-area: 2 / 3;
+}
+.back-dice .dot:nth-child(5) {
+    grid-area: 3 / 1;
+}
+.back-dice .dot:nth-child(6) {
+    grid-area: 3 / 3;
+}
 
-.front  { transform: rotateY(0deg) translateZ(30px); }
-.back-dice   { transform: rotateY(180deg) translateZ(30px); }
-.right  { transform: rotateY(90deg) translateZ(30px); }
-.left   { transform: rotateY(-90deg) translateZ(30px); }
-.top    { transform: rotateX(90deg) translateZ(30px); }
-.bottom { transform: rotateX(-90deg) translateZ(30px); }
+.front {
+    transform: rotateY(0deg) translateZ(30px);
+}
+.back-dice {
+    transform: rotateY(180deg) translateZ(30px);
+}
+.right {
+    transform: rotateY(90deg) translateZ(30px);
+}
+.left {
+    transform: rotateY(-90deg) translateZ(30px);
+}
+.top {
+    transform: rotateX(90deg) translateZ(30px);
+}
+.bottom {
+    transform: rotateX(-90deg) translateZ(30px);
+}
 
 .rolling {
     animation: rotateDice 0.5s infinite linear;
 }
 
 @keyframes rotateDice {
-    0% { transform: rotateX(0deg) rotateY(0deg); }
-    100% { transform: rotateX(360deg) rotateY(360deg); -webkit-transform: rotateX(360deg) rotateY(360deg); -moz-transform: rotateX(360deg) rotateY(360deg); -ms-transform: rotateX(360deg) rotateY(360deg); -o-transform: rotateX(360deg) rotateY(360deg); }
+    0% {
+        transform: rotateX(0deg) rotateY(0deg);
+    }
+    100% {
+        transform: rotateX(360deg) rotateY(360deg);
+        -webkit-transform: rotateX(360deg) rotateY(360deg);
+        -moz-transform: rotateX(360deg) rotateY(360deg);
+        -ms-transform: rotateX(360deg) rotateY(360deg);
+        -o-transform: rotateX(360deg) rotateY(360deg);
+    }
 }
 
 /* =========================================
@@ -895,7 +957,9 @@ body.light-mode .select-difficulty button.active {
         gap: 20px;
     }
 
-    #main-menu, #menu-select-player, #menu-vs-bot {
+    #main-menu,
+    #menu-select-player,
+    #menu-vs-bot {
         width: 90%;
     }
     .game-title {
