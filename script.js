@@ -577,8 +577,6 @@ function rollDice(isBotCall = false) {
                                 : difficulty === "normal"
                                   ? 0.5
                                   : 0;
-                        console.log(difficulty)
-                        console.log(randomThreshold);
                         const shouldMoveRandomly =
                             Math.random() < randomThreshold;
 
