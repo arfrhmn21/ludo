@@ -6,6 +6,7 @@ const pathArea = document.getElementById("path-area");
 const board = document.getElementById("board");
 const ALL_PATHS = {};
 const MAX_FAIL_TURNS = 6;
+const savedTheme = localStorage.getItem("ludo-theme") || "dark";
 
 const PLAYER_COLORS = {
     red: "#e74c3c",
@@ -153,8 +154,8 @@ function playSound(soundName) {
         sounds[soundName].currentTime = 0;
         sounds[soundName].volume = 1;
         sounds[soundName]
-            .play()
-            .catch((e) => console.log("Audio play blocked by browser"));
+        .play()
+        .catch((e) => console.log("Audio play blocked by browser"));
     }
 }
 
@@ -186,10 +187,10 @@ let turnsWithoutExit = {
 };
 
 let pionsPos = {
-    red: [56, 56, 56, 53],
-    green: [56, 56, 56, 53],
-    blue: [56, 56, 56, 53],
-    yellow: [56, 56, 56, 53],
+    red: [-1, -1, -1, -1],
+    green: [-1, -1, -1, -1],
+    blue: [-1, -1, -1, -1],
+    yellow: [-1, -1, -1, -1],
 };
 
 /* -------------------------------------------------------------------------- */
@@ -339,14 +340,50 @@ function renderGridPath() {
                     cell.appendChild(star);
                 }
 
-                if (col === 0 && row >= 6 && row <= 8) {
-                    cell.style.borderLeft = "2px solid #000";
-                } else if (row === 0 && col >= 6 && col <= 8) {
-                    cell.style.borderTop = "2px solid #000";
-                } else if (col === 14 && row >= 6 && row <= 8) {
-                    cell.style.borderRight = "2px solid #000";
-                } else if (row === 14 && col >= 6 && col <= 8) {
-                    cell.style.borderBottom = "2px solid #000";
+                const configs = [
+                    {
+                        condition: col === 0 && row >= 6 && row <= 8,
+                        arrowPos: row === 7 && col === 0,
+                        icon: "&rarr;",
+                        colorIdx: 0,
+                        border: "borderLeft",
+                    },
+                    {
+                        condition: row === 0 && col >= 6 && col <= 8,
+                        arrowPos: col === 7 && row === 0,
+                        icon: "&darr;",
+                        colorIdx: 1,
+                        border: "borderTop",
+                    },
+                    {
+                        condition: col === 14 && row >= 6 && row <= 8,
+                        arrowPos: row === 7 && col === 14,
+                        icon: "&larr;",
+                        colorIdx: 2,
+                        border: "borderRight",
+                    },
+                    {
+                        condition: row === 14 && col >= 6 && col <= 8,
+                        arrowPos: col === 7 && row === 14,
+                        icon: "&uarr;",
+                        colorIdx: 3,
+                        border: "borderBottom",
+                    },
+                ];
+
+                const config = configs.find((c) => c.condition);
+
+                if (config) {
+                    if (config.arrowPos) {
+                        const arrow = document.createElement("span");
+                        arrow.innerHTML = config.icon;
+                        arrow.style.color =
+                            PLAYER_COLORS[ALL_COLORS[config.colorIdx]];
+                        arrow.style.position = "absolute";
+                        cell.appendChild(arrow);
+                    }
+
+                    cell.style[config.border] = "2px solid #000";
                 }
 
                 pathArea.appendChild(cell);
@@ -364,27 +401,15 @@ function rollDice(isBotCall = false) {
     const color = players[currentPlayerIndex];
     if (botPlayers.includes(color) && !isBotCall) return;
     if (isRolling || (turnStep !== "roll" && !isBotCall)) return;
-    const diceElement = document.getElementById("dice");
+    const cube = document.getElementById("cube");
+
     isRolling = true;
     playSound("roll");
-    diceElement.classList.add("disabled");
 
-    let lastDisplayedValue = -1;
-
-    let rollInterval = setInterval(() => {
-        let randomValue;
-
-        do {
-            randomValue = Math.floor(Math.random() * 6) + 1;
-        } while (randomValue === lastDisplayedValue);
-
-        lastDisplayedValue = randomValue;
-
-        diceElement.setAttribute("data-dice", randomValue);
-    }, 80);
+    cube.classList.add("rolling");
 
     setTimeout(() => {
-        clearInterval(rollInterval);
+        cube.classList.remove("rolling");
 
         const color = players[currentPlayerIndex];
         const path = ALL_PATHS[color];
@@ -506,7 +531,18 @@ function rollDice(isBotCall = false) {
             consecutiveSixCount = 0;
         }
 
-        diceElement.setAttribute("data-dice", currentDiceValue);
+        const rotations = {
+            1: "rotateX(0deg) rotateY(0deg)",
+            2: "rotateX(-90deg) rotateY(0deg)",
+            3: "rotateX(0deg) rotateY(-90deg)",
+            4: "rotateX(0deg) rotateY(90deg)",
+            5: "rotateX(90deg) rotateY(0deg)",
+            6: "rotateX(180deg) rotateY(0deg)",
+        };
+
+        cube.style.transform = rotations[finalDiceValue];
+
+        cube.setAttribute("data-dice", currentDiceValue);
 
         const movablePionIds = [];
         pionsPos[color].forEach((pos, idx) => {
@@ -537,7 +573,7 @@ function rollDice(isBotCall = false) {
 
         if (movablePionIds.length === 0) {
             setTimeout(() => {
-                diceElement.classList.remove("disabled");
+                cube.classList.remove("disabled");
                 nextTurn();
             }, 500);
         } else {
@@ -674,7 +710,9 @@ function rollDice(isBotCall = false) {
                 }
             }
         }
-        isRolling = false;
+        setTimeout(() => {
+            isRolling = false;
+        }, 100);
     }, 1000);
 }
 
@@ -1013,9 +1051,21 @@ function updateCenterPionSizes(color) {
 
 function updateDiceUI() {
     const dice = document.getElementById("dice");
-    const color = players[currentPlayerIndex];
-    dice.style.backgroundColor = PLAYER_COLORS[color];
-    if (botPlayers.includes(color)) {
+    const faces = document.querySelectorAll(".face");
+    const colorKey = players[currentPlayerIndex]; // Misal "red", "blue"
+    const hexColor = PLAYER_COLORS[colorKey]; // Ambil kode warna hex dari objek Anda
+
+    // Mewarnai setiap sisi dadu
+    faces.forEach(face => {
+        face.style.backgroundColor = hexColor;
+        
+        const dots = face.querySelectorAll(".dot");
+        dots.forEach(dot => {
+            dot.style.background = "#333";
+        });
+    });
+
+    if (botPlayers.includes(colorKey)) {
         dice.style.cursor = "not-allowed";
         dice.style.opacity = "0.6";
     } else {
@@ -1206,6 +1256,7 @@ function showFinalResult() {
     const overlay = document.getElementById("result-overlay");
     const statsBody = document.getElementById("stats-body");
     const finishTimeDisplay = document.getElementById("finish-time");
+    const resultText = document.getElementById("result-text");
 
     const endTime = new Date();
     const timeDiff = Math.floor((endTime - startTime) / 1000);
@@ -1225,6 +1276,8 @@ function showFinalResult() {
                     ? "🥉 3rd"
                     : "4th";
         const isLoser = index === players.length - 1;
+        const winner = winnersOrder[0];
+        const loser = winnersOrder[winnersOrder.length - 1];
 
         let displayName = "";
 
@@ -1235,15 +1288,41 @@ function showFinalResult() {
             } else {
                 displayName = `COMPUTER ${botIndex}`;
             }
+
+            const isWinnerBot = botPlayers.includes(winner);
+            const isLoserBot = botPlayers.includes(loser);
+
+            if (!isWinnerBot) {
+                resultText.style.color = "#ffd900";
+                resultText.innerText = "CONGRATULATIONS!";
+            } else if (botPlayers.length > 1 && isLoserBot) {
+                resultText.style.color = "#2ecc71";
+                resultText.innerText = "FINISHED!";
+            } else {
+                resultText.style.color = "#e74c3c";
+                resultText.innerText = "LOSE!";
+            }
         } else {
             const humanPlayers = players.filter((c) => !botPlayers.includes(c));
             const playerIndex = humanPlayers.indexOf(color) + 1;
+
             if (botPlayers.length > 0) {
                 displayName =
                     humanPlayers.length === 1 ? `YOU` : `PLAYER ${playerIndex}`;
             } else {
                 displayName = `PLAYER ${playerIndex}`;
             }
+
+            const winnerColorHex = PLAYER_COLORS[winner];
+            resultText.style.color = winnerColorHex;
+
+            const winnerIndex = humanPlayers.indexOf(winner) + 1;
+            const winnerName =
+                humanPlayers.length === 1 && botPlayers.length > 0
+                    ? "YOU"
+                    : `PLAYER ${winnerIndex}`;
+
+            resultText.innerText = `${winnerName} WINS!`;
         }
 
         row.innerHTML = `
@@ -1638,7 +1717,6 @@ function setupDifficultyListeners() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("ludo-theme") || "dark";
     setTheme(savedTheme);
     setupDifficultyListeners();
 });

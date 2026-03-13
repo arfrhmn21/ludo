@@ -18,16 +18,42 @@
 
             <div class="controls">
                 <div id="dice-container">
-                    <div id="dice" onclick="rollDice()" data-dice="1">
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
-                        <span class="pip"></span>
+                    <div id="dice" onclick="rollDice()">
+                        <div class="cube" id="cube" data-dice="1">
+                            <div class="face front" data-value="1">
+                                <span class="dot"></span>
+                            </div>
+                            <div class="face back-dice" data-value="6">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                            <div class="face right" data-value="3">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                            <div class="face left" data-value="4">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                            <div class="face top" data-value="2">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                            <div class="face bottom" data-value="5">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -183,12 +209,34 @@
                     class="player-config"
                     style="display: none"
                 >
-                    <p class="info-text">All colors will be automatically assigned.</p>
+                    <p class="info-text">
+                        All colors will be automatically assigned.
+                    </p>
                     <div class="color-options disabled">
-                        <button class="color-btn red selected" data-color="red" style="cursor: default;" disabled></button>
-                        <button class="color-btn blue selected" data-color="blue" style="cursor: default;" disabled></button>
-                        <button class="color-btn green selected" data-color="green" style="cursor: default;" disabled></button>
-                        <button class="color-btn yellow selected" data-color="yellow" style="cursor: default;" disabled></button>
+                        <button
+                            class="color-btn red selected"
+                            data-color="red"
+                            style="cursor: default"
+                            disabled
+                        ></button>
+                        <button
+                            class="color-btn blue selected"
+                            data-color="blue"
+                            style="cursor: default"
+                            disabled
+                        ></button>
+                        <button
+                            class="color-btn green selected"
+                            data-color="green"
+                            style="cursor: default"
+                            disabled
+                        ></button>
+                        <button
+                            class="color-btn yellow selected"
+                            data-color="yellow"
+                            style="cursor: default"
+                            disabled
+                        ></button>
                     </div>
                 </div>
             </div>
@@ -273,7 +321,7 @@
 
         <div id="result-overlay" class="result-overlay" style="display: none">
             <div class="result-content">
-                <h2>CONGRATULATIONS!</h2>
+                <h2 id="result-text"></h2>
                 <p class="match-time">
                     Match Duration: <span id="finish-time">00:00</span>
                 </p>
