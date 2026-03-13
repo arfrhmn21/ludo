@@ -1228,30 +1228,31 @@ function showFinalResult() {
 
         let displayName = "";
 
-if (botPlayers.includes(color)) {
-    const botIndex = botPlayers.indexOf(color) + 1;
-    if (botPlayers.length === 1) {
-        displayName = `COMPUTER`;
-    } else {
-        displayName = `COMPUTER ${botIndex}`;
-    }
-} else {
-    const humanPlayers = players.filter(c => !botPlayers.includes(c));
-    const playerIndex = humanPlayers.indexOf(color) + 1;
-    if (botPlayers.length > 0) {
-        displayName = (humanPlayers.length === 1) ? `YOU` : `PLAYER ${playerIndex}`;
-    } else {
-        displayName = `PLAYER ${playerIndex}`;
-    }
-}
+        if (botPlayers.includes(color)) {
+            const botIndex = botPlayers.indexOf(color) + 1;
+            if (botPlayers.length === 1) {
+                displayName = `COMPUTER`;
+            } else {
+                displayName = `COMPUTER ${botIndex}`;
+            }
+        } else {
+            const humanPlayers = players.filter((c) => !botPlayers.includes(c));
+            const playerIndex = humanPlayers.indexOf(color) + 1;
+            if (botPlayers.length > 0) {
+                displayName =
+                    humanPlayers.length === 1 ? `YOU` : `PLAYER ${playerIndex}`;
+            } else {
+                displayName = `PLAYER ${playerIndex}`;
+            }
+        }
 
-row.innerHTML = `
-    <td style="color: #fff">${rankText}</td>
-    <td style="color: ${PLAYER_COLORS[color]}">${displayName}</td>
-    <td style="color: ${isLoser ? "#e74c3c" : index === 0 ? "#ffd900" : "#2ecc71"}">
-        ${isLoser ? "LOSER" : index === 0 ? "WINNER" : "FINISHED"}
-    </td>
-`;
+        row.innerHTML = `
+            <td style="color: #fff">${rankText}</td>
+            <td style="color: ${PLAYER_COLORS[color]}">${displayName}</td>
+            <td style="color: ${isLoser ? "#e74c3c" : index === 0 ? "#ffd900" : "#2ecc71"}">
+                ${isLoser ? "LOSER" : index === 0 ? "WINNER" : "FINISHED"}
+            </td>
+        `;
         statsBody.appendChild(row);
     });
 
