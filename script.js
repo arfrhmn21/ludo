@@ -176,6 +176,7 @@ let isVsComputerMode = false;
 let consecutiveSixCount = 0;
 let startTime;
 let gameEnded = false;
+let difficulty = localStorage.getItem("ludo-difficulty") || "hard";
 
 let turnsWithoutExit = {
     red: 0,
@@ -185,10 +186,10 @@ let turnsWithoutExit = {
 };
 
 let pionsPos = {
-    red: [-1, -1, -1, -1],
-    green: [-1, -1, -1, -1],
-    blue: [-1, -1, -1, -1],
-    yellow: [-1, -1, -1, -1]
+    red: [56, 56, 56, 53],
+    green: [56, 56, 56, 53],
+    blue: [56, 56, 56, 53],
+    yellow: [56, 56, 56, 53],
 };
 
 /* -------------------------------------------------------------------------- */
@@ -368,8 +369,17 @@ function rollDice(isBotCall = false) {
     playSound("roll");
     diceElement.classList.add("disabled");
 
+    let lastDisplayedValue = -1;
+
     let rollInterval = setInterval(() => {
-        const randomValue = Math.floor(Math.random() * 6) + 1;
+        let randomValue;
+
+        do {
+            randomValue = Math.floor(Math.random() * 6) + 1;
+        } while (randomValue === lastDisplayedValue);
+
+        lastDisplayedValue = randomValue;
+
         diceElement.setAttribute("data-dice", randomValue);
     }, 80);
 
@@ -561,79 +571,102 @@ function rollDice(isBotCall = false) {
                 if (botPlayers.includes(color) && turnStep === "move") {
                     setTimeout(() => {
                         let pionToMove = null;
+                        let randomThreshold =
+                            difficulty === "easy"
+                                ? 0.8
+                                : difficulty === "normal"
+                                  ? 0.5
+                                  : 0;
+                        console.log(difficulty)
+                        console.log(randomThreshold);
+                        const shouldMoveRandomly =
+                            Math.random() < randomThreshold;
 
-                        if (currentDiceValue === 6) {
-                            pionToMove = movablePionIds.find((id) => {
-                                let idx = parseInt(id.split("-")[1] - 1);
-                                return pionsPos[color][idx] === -1;
-                            });
-                        }
+                        if (shouldMoveRandomly) {
+                            pionToMove =
+                                movablePionIds[
+                                    Math.floor(
+                                        Math.random() * movablePionIds.length,
+                                    )
+                                ];
+                        } else {
+                            if (currentDiceValue === 6) {
+                                pionToMove = movablePionIds.find((id) => {
+                                    let idx = parseInt(id.split("-")[1] - 1);
+                                    return pionsPos[color][idx] === -1;
+                                });
+                            }
 
-                        if (!pionToMove) {
-                            const path = ALL_PATHS[color];
-                            pionToMove = movablePionIds.find((id) => {
-                                let idx = parseInt(id.split("-")[1] - 1);
-                                let currentPos = pionsPos[color][idx];
-                                return (
-                                    currentPos + currentDiceValue ===
-                                    path.length - 1
-                                );
-                            });
-                        }
-
-                        if (!pionToMove) {
-                            pionToMove = movablePionIds.find((id) => {
-                                let idx = parseInt(id.split("-")[1] - 1);
-                                let currentPos = pionsPos[color][idx];
-
-                                if (currentPos !== -1) {
-                                    let targetPos =
-                                        currentPos + currentDiceValue;
-                                    let targetCoords =
-                                        ALL_PATHS[color][targetPos];
-
-                                    return simulateCheckCapture(
-                                        id,
-                                        targetCoords,
+                            if (!pionToMove) {
+                                const path = ALL_PATHS[color];
+                                pionToMove = movablePionIds.find((id) => {
+                                    let idx = parseInt(id.split("-")[1] - 1);
+                                    let currentPos = pionsPos[color][idx];
+                                    return (
+                                        currentPos + currentDiceValue ===
+                                        path.length - 1
                                     );
-                                }
-                                return false;
-                            });
-                        }
+                                });
+                            }
 
-                        if (!pionToMove) {
-                            let safePions = movablePionIds.filter((id) => {
-                                let idx = parseInt(id.split("-")[1]) - 1;
-                                let targetPos =
-                                    pionsPos[color][idx] + currentDiceValue;
-                                if (pionsPos[color][idx] === -1) return false;
-                                return isPositionSafe(
-                                    ALL_PATHS[color][targetPos],
-                                    color,
-                                );
-                            });
+                            if (!pionToMove) {
+                                pionToMove = movablePionIds.find((id) => {
+                                    let idx = parseInt(id.split("-")[1] - 1);
+                                    let currentPos = pionsPos[color][idx];
 
-                            if (safePions.length > 0) {
-                                let maxProgress = -1;
-                                safePions.forEach((id) => {
+                                    if (currentPos !== -1) {
+                                        let targetPos =
+                                            currentPos + currentDiceValue;
+                                        let targetCoords =
+                                            ALL_PATHS[color][targetPos];
+
+                                        return simulateCheckCapture(
+                                            id,
+                                            targetCoords,
+                                        );
+                                    }
+                                    return false;
+                                });
+                            }
+
+                            if (!pionToMove) {
+                                let safePions = movablePionIds.filter((id) => {
                                     let idx = parseInt(id.split("-")[1]) - 1;
+                                    let targetPos =
+                                        pionsPos[color][idx] + currentDiceValue;
+                                    if (pionsPos[color][idx] === -1)
+                                        return false;
+                                    return isPositionSafe(
+                                        ALL_PATHS[color][targetPos],
+                                        color,
+                                    );
+                                });
+
+                                if (safePions.length > 0) {
+                                    let maxProgress = -1;
+                                    safePions.forEach((id) => {
+                                        let idx =
+                                            parseInt(id.split("-")[1]) - 1;
+                                        if (
+                                            pionsPos[color][idx] > maxProgress
+                                        ) {
+                                            maxProgress = pionsPos[color][idx];
+                                            pionToMove = id;
+                                        }
+                                    });
+                                }
+                            }
+
+                            if (!pionToMove) {
+                                let maxProgress = -1;
+                                movablePionIds.forEach((id) => {
+                                    let idx = parseInt(id.split("-")[1] - 1);
                                     if (pionsPos[color][idx] > maxProgress) {
                                         maxProgress = pionsPos[color][idx];
                                         pionToMove = id;
                                     }
                                 });
                             }
-                        }
-
-                        if (!pionToMove) {
-                            let maxProgress = -1;
-                            movablePionIds.forEach((id) => {
-                                let idx = parseInt(id.split("-")[1] - 1);
-                                if (pionsPos[color][idx] > maxProgress) {
-                                    maxProgress = pionsPos[color][idx];
-                                    pionToMove = id;
-                                }
-                            });
                         }
 
                         if (!pionToMove) pionToMove = movablePionIds[0];
@@ -1195,11 +1228,32 @@ function showFinalResult() {
                     : "4th";
         const isLoser = index === players.length - 1;
 
-        row.innerHTML = `
-            <td style="color: #fff">${rankText}</td>
-            <td style="color: ${PLAYER_COLORS[color]}">${color.toUpperCase()}</td>
-            <td style="color: ${isLoser ? "#e74c3c" : index === 0 ? "#ffd900" : "#2ecc71"}">${isLoser ? "LOSER" : index === 0 ? "WINNER" : "FINISHED"}</td>
-        `;
+        let displayName = "";
+
+if (botPlayers.includes(color)) {
+    const botIndex = botPlayers.indexOf(color) + 1;
+    if (botPlayers.length === 1) {
+        displayName = `COMPUTER`;
+    } else {
+        displayName = `COMPUTER ${botIndex}`;
+    }
+} else {
+    const humanPlayers = players.filter(c => !botPlayers.includes(c));
+    const playerIndex = humanPlayers.indexOf(color) + 1;
+    if (botPlayers.length > 0) {
+        displayName = (humanPlayers.length === 1) ? `YOU` : `PLAYER ${playerIndex}`;
+    } else {
+        displayName = `PLAYER ${playerIndex}`;
+    }
+}
+
+row.innerHTML = `
+    <td style="color: #fff">${rankText}</td>
+    <td style="color: ${PLAYER_COLORS[color]}">${displayName}</td>
+    <td style="color: ${isLoser ? "#e74c3c" : index === 0 ? "#ffd900" : "#2ecc71"}">
+        ${isLoser ? "LOSER" : index === 0 ? "WINNER" : "FINISHED"}
+    </td>
+`;
         statsBody.appendChild(row);
     });
 
@@ -1538,7 +1592,54 @@ function setTheme(mode) {
     localStorage.setItem("ludo-theme", mode);
 }
 
+function setupDifficultyListeners() {
+    const easyBtn = document.getElementById("easy-mode");
+    const normalBtn = document.getElementById("normal-mode");
+    const hardBtn = document.getElementById("hard-mode");
+
+    easyBtn.innerText = "Easy";
+    normalBtn.innerText = "Normal";
+    hardBtn.innerText = "Hard";
+
+    const updateDifficultyUI = (selected) => {
+        if (selected === "easy") {
+            easyBtn.classList.add("active");
+            normalBtn.classList.remove("active");
+            hardBtn.classList.remove("active");
+        } else if (selected === "normal") {
+            normalBtn.classList.add("active");
+            hardBtn.classList.remove("active");
+            easyBtn.classList.remove("active");
+        } else {
+            hardBtn.classList.add("active");
+            normalBtn.classList.remove("active");
+            easyBtn.classList.remove("active");
+        }
+    };
+
+    updateDifficultyUI(difficulty);
+
+    easyBtn.onclick = function () {
+        difficulty = "easy";
+        localStorage.setItem("ludo-difficulty", "easy");
+        updateDifficultyUI("easy");
+    };
+
+    normalBtn.onclick = function () {
+        difficulty = "normal";
+        localStorage.setItem("ludo-difficulty", "normal");
+        updateDifficultyUI("normal");
+    };
+
+    hardBtn.onclick = function () {
+        difficulty = "hard";
+        localStorage.setItem("ludo-difficulty", "hard");
+        updateDifficultyUI("hard");
+    };
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const savedTheme = localStorage.getItem("ludo-theme") || "dark";
     setTheme(savedTheme);
+    setupDifficultyListeners();
 });

@@ -787,6 +787,66 @@ button {
     animation: blink-yellow 1s infinite;
 }
 
+/* Container untuk tombol difficulty */
+.select-difficulty {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+span.title-mode {
+    margin-top: 20px;
+}
+
+.select-difficulty button {
+    padding: 8px 20px;
+    border: 2px solid #555;
+    background: transparent;
+    color: #fff; /* Sesuaikan jika di light mode gunakan warna gelap */
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+/* Style saat tombol aktif (Selected) */
+.select-difficulty button.active {
+    background-color: #2ecc71; /* Warna hijau sukses */
+    border-color: #2ecc71;
+    color: white;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+/* Efek Hover untuk tombol yang tidak aktif */
+.select-difficulty button:not(.active):hover {
+    border-color: #2ecc71;
+    background: rgba(46, 204, 113, 0.1);
+}
+
+/* Penyesuaian khusus untuk Hard Mode agar terlihat lebih menantang */
+#hard-mode.active {
+    background-color: #e74c3c; /* Warna merah untuk Hard */
+    border-color: #e74c3c;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+#normal-mode.active {
+    background-color: #3498db; /* Warna Biru */
+    border-color: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+/* Responsif untuk Light Mode jika diperlukan */
+body.light-mode .select-difficulty button {
+    color: #333;
+    border-color: #ccc;
+}
+
+body.light-mode .select-difficulty button.active {
+    color: #fff;
+}
+
 @keyframes rotate-border {
     from {
         transform: rotate(0deg);
