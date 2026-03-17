@@ -187,9 +187,9 @@ let turnsWithoutExit = {
 };
 
 let pionsPos = {
-    red: [-1, -1, -1, -1],
-    green: [-1, -1, -1, -1],
-    blue: [-1, -1, -1, -1],
+    red: [56, 56, 56, 55],
+    green: [56, 56, 56, 55],
+    blue: [56, 56, 56, 55],
     yellow: [-1, -1, -1, -1],
 };
 
@@ -1281,17 +1281,23 @@ function showFinalResult() {
 
         let displayName = "";
 
-        if (botPlayers.includes(color)) {
+        if (botPlayers.length > 0) {
+            console.log("area bot")
             const botIndex = botPlayers.indexOf(color) + 1;
-            if (botPlayers.length === 1) {
-                displayName = `COMPUTER`;
-            } else {
-                displayName = `COMPUTER ${botIndex}`;
-            }
+            const humanPlayers = players.filter(c => !botPlayers.includes(c));
+            console.log("human Player:" + humanPlayers)
+            console.log("color:" + color)
+            console.log("");
 
+            if (humanPlayers.includes(color)) {
+                displayName = 'YOU';
+            } else {
+                displayName = botPlayers.length === 1 ? 'COMPUTER' : `COMPUTER ${botIndex}`;
+            }
+            
             const isWinnerBot = botPlayers.includes(winner);
             const isLoserBot = botPlayers.includes(loser);
-
+            
             if (!isWinnerBot) {
                 resultText.style.color = "#ffd900";
                 resultText.innerText = "CONGRATULATIONS!";
@@ -1303,24 +1309,17 @@ function showFinalResult() {
                 resultText.innerText = "LOSE!";
             }
         } else {
+            console.log("area player")
             const humanPlayers = players.filter((c) => !botPlayers.includes(c));
             const playerIndex = humanPlayers.indexOf(color) + 1;
 
-            if (botPlayers.length > 0) {
-                displayName =
-                    humanPlayers.length === 1 ? `YOU` : `PLAYER ${playerIndex}`;
-            } else {
-                displayName = `PLAYER ${playerIndex}`;
-            }
+            displayName = `PLAYER ${playerIndex}`;
 
             const winnerColorHex = PLAYER_COLORS[winner];
             resultText.style.color = winnerColorHex;
 
             const winnerIndex = humanPlayers.indexOf(winner) + 1;
-            const winnerName =
-                humanPlayers.length === 1 && botPlayers.length > 0
-                    ? "YOU"
-                    : `PLAYER ${winnerIndex}`;
+            const winnerName = `PLAYER ${winnerIndex}`;
 
             resultText.innerText = `${winnerName} WINS!`;
         }
