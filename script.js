@@ -187,9 +187,9 @@ let turnsWithoutExit = {
 };
 
 let pionsPos = {
-    red: [56, 56, 56, 55],
-    green: [56, 56, 56, 55],
-    blue: [56, 56, 56, 55],
+    red: [-1, -1, -1, -1],
+    green: [-1, -1, -1, -1],
+    blue: [-1, -1, -1, -1],
     yellow: [-1, -1, -1, -1],
 };
 
